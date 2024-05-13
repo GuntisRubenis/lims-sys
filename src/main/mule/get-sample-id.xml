@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="get-samples-id-sub-flow" doc:id="ba4a781e-986b-46f5-91c3-fb9bf253d887" >
+		<set-variable value='#["samples-id"]' doc:name="flowName" doc:id="d705c743-2a89-434b-8ab5-92049a34cc0d" variableName="flowName" />
+		<logger level="INFO" doc:name="Flow start" doc:id="eee503a2-dc4e-441f-a1f8-2c1a99cceda5" message='#["Flow start " ++ vars.flowName]' />
+		<ee:transform doc:name="url" doc:id="7dae97a0-38e5-4b57-a41c-1ebe6c34a007" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="url" ><![CDATA[%dw 2.0
+output application/json
+---
+"https://gjeulrsgkdmbyfmcpash.supabase.co/rest/v1/samples?limit=1&sample_id=eq." ++ attributes.uriParams.id]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="log payload" doc:id="8dca705b-c054-4a70-b8d6-445d5ee51d66" message="#[payload]" />
+		<http:request method="GET" doc:name="DB Supabase GET: /samples/id" doc:id="dc36997c-c726-483b-bf5f-3125b3b7d107" url="#[vars.url]">
+			<http:headers><![CDATA[#[output application/java
+---
+{
+	"apikey" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdqZXVscnNna2RtYnlmbWNwYXNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTA5NTQ3ODUsImV4cCI6MjAyNjUzMDc4NX0.Y6OKxvzx2j2BZdYI7T0qt0eotF3jVqJyzykaqlr7C_U"
+}]]]></http:headers>
+		</http:request>
+		<logger level="INFO" doc:name="Flow end" doc:id="c2c4c87a-56ed-4273-bdf1-4478af80f782" message='#["Flow end " ++ vars.flowName]' />
+	</sub-flow>
+</mule>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<sub-flow name="post-samples-sub-flow" doc:id="0551a9a6-0396-4a0f-ad44-8fc1c9857f07" >
+		<set-variable value='#["samples"]' doc:name="flowName" doc:id="33beccf8-b8d6-402d-b75f-5207422546b0" variableName="flowName" />
+		<logger level="INFO" doc:name="Flow start" doc:id="271c6e84-ca58-4b7c-b530-0a7c4f9aa42f" message='#["Flow start " ++ vars.flowName]' />
+		<set-variable value="#[payload.'sample_id']" doc:name="sampleId" doc:id="8ed5e006-74fe-43c5-a6f4-902c77c75703" variableName="sampleId" />
+		<logger level="INFO" doc:name="log payload" doc:id="4a1174e6-cb18-4f04-a5f3-76b859f2a876" message="#[payload]" />
+		<http:request method="POST" doc:name="DB Supabase POST: samples" doc:id="a183ab5a-4b15-47a6-800f-ffbe7f8247d1" url="https://gjeulrsgkdmbyfmcpash.supabase.co/rest/v1/samples">
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"apikey" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdqZXVscnNna2RtYnlmbWNwYXNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTA5NTQ3ODUsImV4cCI6MjAyNjUzMDc4NX0.Y6OKxvzx2j2BZdYI7T0qt0eotF3jVqJyzykaqlr7C_U"
+}]]]></http:headers>
+		</http:request>
+		<ee:transform doc:name="set final payload" doc:id="c634f2a9-ce63-4c22-a223-3ac8f677e52c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"sample_id": vars.sampleId,
+	"message": "Sample created successfully"
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Flow end" doc:id="33477924-6852-4872-9b27-957e5a20b764" message='#["Flow end " ++ vars.flowName]' />
+	</sub-flow>
+</mule>

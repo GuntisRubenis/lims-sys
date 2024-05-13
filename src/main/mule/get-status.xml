@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<sub-flow name="get-status-sub-flow" doc:id="d7d1153d-20a4-48bc-84ca-87362dd90697" >
+		<set-variable value='#["status"]' doc:name="flowName" doc:id="1dde74f2-b3c5-43d9-9aa1-dd12155498d1" variableName="flowName" />
+		<logger level="INFO" doc:name="Flow start" doc:id="cfb09306-72ad-4f2e-b216-2dec100d5ce8" message='#["Flow start " ++ vars.flowName]' />
+		<http:request method="GET" doc:name="DB Supabase GET: Status" doc:id="f086b666-3d36-4b58-a7f0-99d52edb879c" url="https://gjeulrsgkdmbyfmcpash.supabase.co/rest/v1/samples?limit=0&amp;select=id" >
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"apikey" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdqZXVscnNna2RtYnlmbWNwYXNoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTA5NTQ3ODUsImV4cCI6MjAyNjUzMDc4NX0.Y6OKxvzx2j2BZdYI7T0qt0eotF3jVqJyzykaqlr7C_U"
+}]]]></http:headers>
+		</http:request>
+		<ee:transform doc:name="payload to JSON" doc:id="1f34b5d7-cbfc-4557-8913-28a250715c33" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Flow end" doc:id="10dfd8aa-8a04-434e-b069-22504900f6bd" message='#["Flow end " ++ vars.flowName]' />
+	</sub-flow>
+</mule>
